@@ -2,9 +2,11 @@ package service;
 
 import model.Guest;
 import repository.GuestRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GuestService {
@@ -18,16 +20,15 @@ public class GuestService {
         return guestRepository.findAll();
     }
 
+    public Optional<Guest> getGuestById(String id) {
+        return guestRepository.findById(id);
+    }
+
     public Guest addGuest(Guest guest) {
         return guestRepository.save(guest);
     }
 
-    public Guest getGuestById(Long id) {
-        return guestRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Guest not found with id: " + id));
-    }
-
-    public void deleteGuest(Long id) {
+    public void deleteGuest(String id) {
         guestRepository.deleteById(id);
     }
 }

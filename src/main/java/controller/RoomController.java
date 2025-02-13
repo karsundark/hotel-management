@@ -2,10 +2,10 @@ package controller;
 
 import model.Room;
 import service.RoomService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -16,25 +16,23 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Room> getAllRooms() {
         return roomService.getAllRooms();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Room> getRoomById(@PathVariable Long id) {
-        Room room = roomService.getRoomById(id);
-        return ResponseEntity.ok(room);
+    @GetMapping("/byId/{id}")
+    public Optional<Room> getRoomById(@PathVariable String id) {
+        return roomService.getRoomById(id);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public Room addRoom(@RequestBody Room room) {
         return roomService.addRoom(room);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
+    @DeleteMapping("/delete/{id}")
+    public void deleteRoom(@PathVariable String id) {
         roomService.deleteRoom(id);
-        return ResponseEntity.noContent().build();
     }
 }

@@ -2,39 +2,35 @@ package controller;
 
 import model.Booking;
 import service.BookingService;
+import security.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import service.UserService;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/bookings")
+@RequestMapping("/bookings")
 public class BookingController {
     private final BookingService bookingService;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, UserService userService, JwtUtil jwtUtil) {
         this.bookingService = bookingService;
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping
-    public List<Booking> getAllBookings() {
-        return bookingService.getAllBookings();
-    }
+    @PostMapping("/add")
+    public ResponseEntity<?> addBooking(@RequestHeader("Authorization") String token, @RequestBody Booking booking) {
+        String username = jwtUtil.extractUsername(token.replace("Bearer ", ""));
+        Optional<?> user = userService.findByUsername(username);
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
-        Booking booking = bookingService.getBookingById(id);
-        return ResponseEntity.ok(booking);
-    }
+        if (user.isEmpty()) {
+            return ResponseEntity.status(403).body("Access Denied: You must be a registered user to add a booking.");
+        }
 
-    @PostMapping
-    public Booking addBooking(@RequestBody Booking booking) {
-        return bookingService.addBooking(booking);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
-        bookingService.deleteBooking(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(bookingService.addBooking(booking));
     }
 }

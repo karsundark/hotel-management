@@ -2,9 +2,11 @@ package service;
 
 import model.Booking;
 import repository.BookingRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -18,16 +20,15 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
+    public Optional<Booking> getBookingById(String id) {
+        return bookingRepository.findById(id);
+    }
+
     public Booking addBooking(Booking booking) {
         return bookingRepository.save(booking);
     }
 
-    public Booking getBookingById(Long id) {
-        return bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
-    }
-
-    public void deleteBooking(Long id) {
+    public void deleteBooking(String id) {
         bookingRepository.deleteById(id);
     }
 }

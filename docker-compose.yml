@@ -8,25 +8,24 @@ services:
     container_name: spring-boot-app
     ports:
       - "8080:8080"
+    volumes:
+      - .:/app
+      - /app/target
+    environment:
+      - SPRING_DATASOURCE_URL=mongodb://db:27017/hotel_management
+      - SPRING_DATASOURCE_USERNAME=hotel_admin
+      - SPRING_DATASOURCE_PASSWORD=hotel_pass
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/hotel_management
-      SPRING_DATASOURCE_USERNAME: "hotel_admin"
-      SPRING_DATASOURCE_PASSWORD: "hotel_pass"
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
   db:
-    image: postgres:15
-    container_name: postgres-db
+    image: mongo:latest
+    container_name: mongo-db
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: hotel_management
-      POSTGRES_USER: "hotel_admin"
-      POSTGRES_PASSWORD: "hotel_pass"
+      - "27017:27017"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mongo_data:/data/db
 
 volumes:
-  postgres_data:
+  mongo_data:
